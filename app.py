@@ -168,9 +168,6 @@ if not final_df.empty:
             tickvals=final_df.index.strftime('%H:%M'),
             ticktext=hour_labels,
             ticklabelposition="outside right",
-            title="Čas",
-            title_standoff=5,
-            title_font=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 1.1, family=GLOBAL_FONT_FAMILY),
             tickfont=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE, family=GLOBAL_FONT_FAMILY),
             linecolor=GLOBAL_FONT_COLOR,
             gridcolor="lightgray"
