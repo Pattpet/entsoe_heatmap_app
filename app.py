@@ -99,8 +99,8 @@ if failed_countries:
         "Zkuste prosím obnovit stránku."
     )
     # Tlačítko pro obnovení, použijeme ikonu šipky do kola
-    if st.button("Obnovit data", icon=":arrow-clockwise:", key="refresh_button"):
-        st.rerun() # Toto vynutí kompletní obnovení aplikace od začátku
+    if st.button("Obnovit data", key="refresh_button"):
+        st.rerun()
 
 if not final_df.empty:
     st.subheader(f"Ceny elektřiny Day-Ahead pro {selected_day_input.strftime('%Y-%m-%d')}")
