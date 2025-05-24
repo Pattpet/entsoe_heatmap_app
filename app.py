@@ -99,7 +99,7 @@ if failed_countries:
         "Zkuste prosím obnovit stránku."
     )
     # Tlačítko pro obnovení, použijeme ikonu šipky do kola
-    if st.button("Obnovit data", icon="arrow-clockwise", key="refresh_button"):
+    if st.button("Obnovit data", icon=":arrow-clockwise:", key="refresh_button"):
         st.rerun() # Toto vynutí kompletní obnovení aplikace od začátku
 
 if not final_df.empty:
