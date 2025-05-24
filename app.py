@@ -185,7 +185,7 @@ if not final_df.empty:
             y=1.05,
             xref="paper",
             yref="paper",
-            text="Pat Pet",
+            text="PattPet",
             showarrow=False,
             font=dict(size=GLOBAL_FONT_SIZE * 0.9, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY), # Copyright text (mírně menší)
             align="right",
