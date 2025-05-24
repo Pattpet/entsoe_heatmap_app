@@ -1,0 +1,13 @@
+# Ignorovat virtuální prostředí
+venv/
+
+# Ignorovat Python cache soubory
+__pycache__/
+*.pyc
+
+# Ignorovat soubor se Streamlit secrets (OBSAHUJE API TOKEN!)
+.streamlit/secrets.toml
+
+# Ignorovat data specifická pro operační systém
+.DS_Store
+Thumbs.db
