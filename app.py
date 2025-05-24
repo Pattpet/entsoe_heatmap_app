@@ -68,7 +68,11 @@ with st.sidebar:
     today = datetime.now().date()
     default_selected_day = today + timedelta(days=1)
 
-    selected_day_input = st.date_input("Vyberte den", default_selected_day)
+    selected_day_input = st.date_input(
+        "Vyberte den", 
+        default_selected_day,
+        max_value=default_selected_day # Zde se omezuje maximální výběr
+    )
     
     all_countries = ["CZ", "PL", "DE_LU", "FR", "SK", "DK_1", "SE_4", "ES", "AT", "IT_NORD", "NO_3", "HU", "HR", "SI", "BE", "NL", "PT", "IE_SEM", "LT", "LV", "EE", "GR", "FI", "BG", "RO", "CH", "LU"]
 
