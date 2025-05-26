@@ -66,7 +66,7 @@ with st.sidebar:
     st.header("Parametry dotazu")
 
     today = datetime.now().date()
-    default_selected_day = today + timedelta(days=1)
+    default_selected_day = today 
 
     selected_day_input = st.date_input(
         "Vyberte den", 
