@@ -61,17 +61,30 @@ def get_entsoe_data(selected_day_dt, selected_countries, api_token):
             # Pro tuto ukázku pokračujeme, ale s chybovou zprávou
     return final_df_cached, failed_countries_list # Vracíme i seznam chyb
 
-# --- Nastavení parametrů v postranním panelu (Sidebar) ---
+
 with st.sidebar:
     st.header("Parametry dotazu")
 
-    today = datetime.now().date()
-    default_selected_day = today + timedelta(days=1)
+    # Získáme aktuální datum a čas
+    current_datetime = datetime.now()
+    current_time = current_datetime.time() # Pouze časová část (např. 14:30:00)
+
+    # Definujeme hranici 15:00 (3 PM)
+    threshold_time = datetime.time(15, 0, 0)
+
+    # Určíme výchozí den na základě aktuálního času
+    if current_time < threshold_time:
+        # Je-li před 15:00, výchozí den je dnešek
+        default_selected_day = current_datetime.date()
+    else:
+        # Je-li 15:00 nebo později, výchozí den je zítra
+        default_selected_day = current_datetime.date() + timedelta(days=1)
 
     selected_day_input = st.date_input(
-        "Vyberte den", 
-        default_selected_day,
-        max_value=default_selected_day # Zde se omezuje maximální výběr
+        "Vyberte den",
+        value=default_selected_day, # Nastaví výchozí vybraný den
+        min_value=default_selected_day, # Minimální možný výběr je 'default_selected_day'
+        max_value=default_selected_day  # Maximální možný výběr je 'default_selected_day'
     )
     
     all_countries = ["CZ", "PL", "DE_LU", "FR", "SK", "DK_1", "SE_4", "ES", "AT", "IT_NORD", "NO_3", "HU", "HR", "SI", "BE", "NL", "PT", "IE_SEM", "LT", "LV", "EE", "GR", "FI", "BG", "RO", "CH", "LU"]
@@ -79,7 +92,7 @@ with st.sidebar:
     selected_countries = st.multiselect(
         "Vyberte země",
         options=all_countries,
-        default=["CZ", "DE_LU", "FR", "SK", "PL", "AT"]
+        default=["CZ", "DE_LU",  "SK", "PL", "AT", "FR",]
     )
 
     if not selected_countries:
