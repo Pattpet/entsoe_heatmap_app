@@ -160,7 +160,7 @@ if not final_df.empty:
             tickmode='array',
             tickvals=final_df.columns,
             ticktext=new_labels,
-            title="Země (zóna) / Spread [€/MWh]",
+            title="Country (bidding zone) / Spread [€/MWh]",
             title_font=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 1.1, family=GLOBAL_FONT_FAMILY),
             tickfont=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE, family=GLOBAL_FONT_FAMILY),
             linecolor=GLOBAL_FONT_COLOR,
