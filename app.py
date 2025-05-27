@@ -74,7 +74,7 @@ with st.sidebar:
     selected_day_input = st.date_input(
         "Vyberte den", 
         default_selected_day,
-        max_value=default_selected_day # Zde se omezuje maximální výběr
+        max_value=default_selected_day + timedelta(days=1) # Zde se omezuje maximální výběr
     )
     
     all_countries = ["CZ", "PL", "DE_LU", "FR", "SK", "DK_1", "SE_4", "ES", "AT", "IT_NORD", "NO_3", "HU", "HR", "SI", "BE", "NL", "PT", "IE_SEM", "LT", "LV", "EE", "GR", "FI", "BG", "RO", "CH", "LU"]
@@ -198,15 +198,14 @@ if not final_df.empty:
     st.plotly_chart(fig, use_container_width=True)
     
     # --- SEKCE KŘIVKOVÝ GRAF ---
-    st.markdown("---") # Vizuální oddělovač
+    st.markdown("---") 
     show_line_chart = st.checkbox("Zobrazit křivkový graf cen", key="line_chart_checkbox")
 
     if show_line_chart:
         st.subheader("Křivkový graf denních cen")
 
-        # Připravíme data pro Plotly Express line chart (rozbalíme "široký" DataFrame na "dlouhý" formát)
         df_line = final_df.copy()
-        df_line.index.name = "Čas" # Přejmenujeme index pro lepší čitelnost po meltu
+        df_line.index.name = "Čas" 
         df_line_melted = df_line.reset_index().melt(id_vars="Čas", var_name="Země", value_name="Cena [€/MWh]")
 
         fig_line = px.line(
@@ -214,14 +213,22 @@ if not final_df.empty:
             x="Čas",
             y="Cena [€/MWh]",
             color="Země",
-            line_shape="hv", # Toto je to, co zajistí "hv" křivky (horizontal-vertical)
+            line_shape="hv", 
             title=f"Denní křivky cen elektřiny pro {selected_day_input.strftime('%Y-%m-%d')}",
-            labels={"Čas": "Čas", "Cena [€/MWh]": "Cena [€/MWh]", "Země": "Země"},
+            labels={"Čas": "Time", "Cena [€/MWh]": "Price [€/MWh]", "Země": "Countries"},
             height=600
         )
 
-        # Aplikujeme globální styly na křivkový graf
+        # >>> ZDE PŘIDÁŠ NASTAVENÍ TLOUŠŤKY ČAR <<<
+        fig_line.update_traces(line=dict(width=2.5)) 
+        # <<< Konec nastavení tloušťky čar >>>
+
+        # Aplikujeme custom hovertemplate na každou stopu
+        for trace in fig_line.data:
+            trace.hovertemplate = '<b>Země: %{fullData.name}</b><br>Cena: %{y:.2f} €/MWh<extra></extra>'
+
         fig_line.update_layout(
+            hovermode='x unified', # Nastavení pro "tabulku všech hodnot"
             font=dict(family=GLOBAL_FONT_FAMILY, size=GLOBAL_FONT_SIZE * 0.9, color=GLOBAL_FONT_COLOR),
             plot_bgcolor='white',
             paper_bgcolor='white',
@@ -235,7 +242,8 @@ if not final_df.empty:
                 title_font=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 1.05, family=GLOBAL_FONT_FAMILY),
                 tickfont=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 0.9, family=GLOBAL_FONT_FAMILY),
                 linecolor=GLOBAL_FONT_COLOR,
-                gridcolor="lightgray"
+                gridcolor="lightgray",
+                
             ),
             title_font=dict(size=GLOBAL_FONT_SIZE * 1.1, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY),
             legend_title_text='Země',
@@ -243,6 +251,7 @@ if not final_df.empty:
         )
 
         st.plotly_chart(fig_line, use_container_width=True)
+
 
     # --- SEKCE TABULKA DAT ---
     st.markdown("---") # Další vizuální oddělovač
