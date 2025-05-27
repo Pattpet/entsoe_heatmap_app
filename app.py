@@ -247,7 +247,19 @@ if not final_df.empty:
             ),
             title_font=dict(size=GLOBAL_FONT_SIZE * 1.1, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY),
             legend_title_text='Země',
-            legend_font=dict(size=GLOBAL_FONT_SIZE * 0.9, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY)
+            legend_font=dict(size=GLOBAL_FONT_SIZE * 0.9, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY),
+            annotations=[dict(
+                x=1,
+                y=1.05,
+                xref="paper",
+                yref="paper",
+                text="PattPet",
+                showarrow=False,
+                font=dict(size=GLOBAL_FONT_SIZE * 0.9, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY),
+                align="right",
+                borderpad=4
+                )
+            ]
         )
 
         st.plotly_chart(fig_line, use_container_width=True)
