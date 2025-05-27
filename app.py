@@ -26,9 +26,12 @@ except KeyError:
 
 client = EntsoePandasClient(api_key=token)
 
+if 'cache_buster' not in st.session_state:
+    st.session_state.cache_buster = 0
+
 # --- Funkce pro stahování dat (s kešováním) ---
-@st.cache_data(ttl=3600) # Kešuje data na 1 hodinu (3600 sekund)
-def get_entsoe_data(selected_day_dt, selected_countries, api_token):
+@st.cache_data(ttl=3600)
+def get_entsoe_data(selected_day_dt, selected_countries, api_token, cache_buster):
     """
     Stahuje data denních cen elektřiny z ENTSOE pro jeden vybraný den.
     Vrací DataFrame a seznam států, pro které se data nepodařilo načíst.
@@ -97,7 +100,7 @@ GLOBAL_FONT_COLOR = "black"
 
 with st.spinner(f"Stahování dat z ENTSOE pro {selected_day_input.strftime('%Y-%m-%d')}..."):
     # Nyní get_entsoe_data vrací i seznam chyb
-    final_df, failed_countries = get_entsoe_data(selected_day_input, selected_countries, token)
+    final_df, failed_countries = get_entsoe_data(selected_day_input, selected_countries, token, st.session_state.cache_buster)
 
 # --- Zobrazení chyb a tlačítka pro refresh ---
 if failed_countries:
@@ -107,7 +110,8 @@ if failed_countries:
     )
     # Tlačítko pro obnovení, použijeme ikonu šipky do kola
     if st.button("Obnovit data", key="refresh_button"):
-        st.rerun()
+        st.session_state.cache_buster += 1 # Zvýšíme cache_buster
+        st.rerun() # Restartujeme skript
 
 if not final_df.empty:
     # --- HEATMAPA ---
@@ -243,6 +247,7 @@ if not final_df.empty:
                 tickfont=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 0.9, family=GLOBAL_FONT_FAMILY),
                 linecolor=GLOBAL_FONT_COLOR,
                 gridcolor="lightgray",
+                zerolinecolor = "black"
                 
             ),
             title_font=dict(size=GLOBAL_FONT_SIZE * 1.1, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY),
