@@ -219,9 +219,7 @@ if not final_df.empty:
             height=600
         )
 
-        # >>> ZDE PŘIDÁŠ NASTAVENÍ TLOUŠŤKY ČAR <<<
         fig_line.update_traces(line=dict(width=2.2)) 
-        # <<< Konec nastavení tloušťky čar >>>
 
         # Aplikujeme custom hovertemplate na každou stopu
         for trace in fig_line.data:
@@ -236,7 +234,9 @@ if not final_df.empty:
                 title_font=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 1.05, family=GLOBAL_FONT_FAMILY),
                 tickfont=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 0.9, family=GLOBAL_FONT_FAMILY),
                 linecolor=GLOBAL_FONT_COLOR,
-                gridcolor="lightgray"
+                gridcolor="lightgray",
+                title = None,
+                
             ),
             yaxis=dict(
                 title_font=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 1.05, family=GLOBAL_FONT_FAMILY),
@@ -246,7 +246,7 @@ if not final_df.empty:
                 
             ),
             title_font=dict(size=GLOBAL_FONT_SIZE * 1.1, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY),
-            legend_title_text='Země',
+            legend_title_text=None,
             legend_font=dict(size=GLOBAL_FONT_SIZE * 0.9, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY),
             annotations=[dict(
                 x=1,
@@ -259,7 +259,14 @@ if not final_df.empty:
                 align="right",
                 borderpad=4
                 )
-            ]
+            ],
+            legend=dict(
+                orientation="h",
+                yanchor="bottom",
+                y=-0.2,
+                xanchor="center",
+                x=0.5
+            )
         )
 
         st.plotly_chart(fig_line, use_container_width=True)
