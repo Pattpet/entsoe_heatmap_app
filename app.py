@@ -220,7 +220,7 @@ if not final_df.empty:
         )
 
         # >>> ZDE PŘIDÁŠ NASTAVENÍ TLOUŠŤKY ČAR <<<
-        fig_line.update_traces(line=dict(width=2.5)) 
+        fig_line.update_traces(line=dict(width=2.2)) 
         # <<< Konec nastavení tloušťky čar >>>
 
         # Aplikujeme custom hovertemplate na každou stopu
