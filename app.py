@@ -53,6 +53,9 @@ def get_entsoe_data(selected_day_dt, selected_countries, api_token):
                 failed_countries_list.append(country) # Přidáme stát do seznamu chyb
                 continue
 
+            # Ujistěte se, že index je datetime a je to 24 hodinový rozsah
+            # price_series = price_series.reindex(pd.date_range(start=start_ts, end=end_ts - timedelta(hours=1), freq='H'))
+            # ENTSOE data by měla být již v správném formátu, ale pro jistotu
             final_df_cached[country] = price_series
 
         except Exception as e:
@@ -107,9 +110,10 @@ if failed_countries:
         st.rerun()
 
 if not final_df.empty:
+    # --- HEATMAPA ---
     st.subheader(f"Ceny elektřiny Day-Ahead pro {selected_day_input.strftime('%Y-%m-%d')}")
 
-    # --- Příprava dat pro heatmapu ---
+    # Příprava dat pro heatmapu
     spreads = (final_df.max() - final_df.min()).round(1)
     new_labels = [f"{country}<br>{spread}" for country, spread in zip(final_df.columns, spreads)]
     text_labels = final_df.round(1).astype(str).values
@@ -117,7 +121,7 @@ if not final_df.empty:
 
     zmin = final_df.values.min()
     zmax = final_df.values.max()
-    zmid = 0
+    zmid = 0 # Střední hodnota pro color scale
 
     fig = go.Figure(
         data=go.Heatmap(
@@ -125,9 +129,9 @@ if not final_df.empty:
             x=final_df.columns,
             y=final_df.index.strftime('%H:%M'),
             colorscale=[
-                [0.0, 'rgb(106,168,79)'],
-                [abs(zmin) / (abs(zmin) + zmax) if (zmin < 0 and zmax > 0) else (0.0 if zmin >= 0 else 1.0), 'rgb(225,237,219)'],
-                [1.0, 'rgb(204,0,0)']
+                [0.0, 'rgb(106,168,79)'], # Zelená pro nejnižší ceny
+                [abs(zmin) / (abs(zmin) + zmax) if (zmin < 0 and zmax > 0) else (0.0 if zmin >= 0 else 1.0), 'rgb(225,237,219)'], # Neutrální pro střední
+                [1.0, 'rgb(204,0,0)'] # Červená pro nejvyšší ceny
             ],
             zmin=zmin,
             zmax=zmax,
@@ -193,8 +197,60 @@ if not final_df.empty:
     
     st.plotly_chart(fig, use_container_width=True)
     
-    st.subheader("Data v tabulce")
-    st.dataframe(final_df.round(2))
+    # --- SEKCE KŘIVKOVÝ GRAF ---
+    st.markdown("---") # Vizuální oddělovač
+    show_line_chart = st.checkbox("Zobrazit křivkový graf cen", key="line_chart_checkbox")
+
+    if show_line_chart:
+        st.subheader("Křivkový graf denních cen")
+
+        # Připravíme data pro Plotly Express line chart (rozbalíme "široký" DataFrame na "dlouhý" formát)
+        df_line = final_df.copy()
+        df_line.index.name = "Čas" # Přejmenujeme index pro lepší čitelnost po meltu
+        df_line_melted = df_line.reset_index().melt(id_vars="Čas", var_name="Země", value_name="Cena [€/MWh]")
+
+        fig_line = px.line(
+            df_line_melted,
+            x="Čas",
+            y="Cena [€/MWh]",
+            color="Země",
+            line_shape="hv", # Toto je to, co zajistí "hv" křivky (horizontal-vertical)
+            title=f"Denní křivky cen elektřiny pro {selected_day_input.strftime('%Y-%m-%d')}",
+            labels={"Čas": "Čas", "Cena [€/MWh]": "Cena [€/MWh]", "Země": "Země"},
+            height=600
+        )
+
+        # Aplikujeme globální styly na křivkový graf
+        fig_line.update_layout(
+            font=dict(family=GLOBAL_FONT_FAMILY, size=GLOBAL_FONT_SIZE * 0.9, color=GLOBAL_FONT_COLOR),
+            plot_bgcolor='white',
+            paper_bgcolor='white',
+            xaxis=dict(
+                title_font=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 1.05, family=GLOBAL_FONT_FAMILY),
+                tickfont=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 0.9, family=GLOBAL_FONT_FAMILY),
+                linecolor=GLOBAL_FONT_COLOR,
+                gridcolor="lightgray"
+            ),
+            yaxis=dict(
+                title_font=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 1.05, family=GLOBAL_FONT_FAMILY),
+                tickfont=dict(color=GLOBAL_FONT_COLOR, size=GLOBAL_FONT_SIZE * 0.9, family=GLOBAL_FONT_FAMILY),
+                linecolor=GLOBAL_FONT_COLOR,
+                gridcolor="lightgray"
+            ),
+            title_font=dict(size=GLOBAL_FONT_SIZE * 1.1, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY),
+            legend_title_text='Země',
+            legend_font=dict(size=GLOBAL_FONT_SIZE * 0.9, color=GLOBAL_FONT_COLOR, family=GLOBAL_FONT_FAMILY)
+        )
+
+        st.plotly_chart(fig_line, use_container_width=True)
+
+    # --- SEKCE TABULKA DAT ---
+    st.markdown("---") # Další vizuální oddělovač
+    show_data_table = st.checkbox("Zobrazit data v tabulce", key="data_table_checkbox")
+
+    if show_data_table:
+        st.subheader("Data v tabulce")
+        st.dataframe(final_df.round(2))
 
 else:
     # Tato zpráva se zobrazí, pokud se nenačetla data pro ŽÁDNÝ vybraný stát.
