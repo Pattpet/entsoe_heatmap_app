@@ -280,7 +280,7 @@ if not final_df.empty:
         st.subheader(f"Day-Ahead Electricity Prices for {selected_day_input.strftime('%Y-%m-%d')} ({resolution_text} resolution)")
 
         # --- Colorscale Selection and Reverse button ---
-        colorscale_options = ["Default", "Picnic", "balance", "Temps", "Fall", "Tropic", "Portland", "Earth", "PRGn", "RdBu", "Viridis"]
+        colorscale_options = ["Default", "Picnic", "balance", "Temps", "Fall", "Tropic", "Portland", "Earth", "PRGn", "RdBu", "Viridis", "ice", "deep", "dense", "gray", "hot", "jet", "cividis", "RdBu", "YlGnBu", "YlOrRd", "haline"]
         
         col_cs, col_rev = st.columns([2, 1])
         with col_cs:
