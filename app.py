@@ -274,7 +274,7 @@ if not final_df.empty:
 
     # --- HEATMAP SECTION (now second, with checkbox to show) ---
     st.markdown("---") 
-    show_heatmap = st.checkbox("Show Heatmap", value=True, key="heatmap_checkbox")
+    show_heatmap = st.checkbox("Show Heatmap", value=False, key="heatmap_checkbox")
 
     if show_heatmap:
         st.subheader(f"Day-Ahead Electricity Prices for {selected_day_input.strftime('%Y-%m-%d')} ({resolution_text} resolution)")
