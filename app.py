@@ -138,7 +138,7 @@ with st.sidebar:
         selected_resolution_display_name = st.radio(
             "Choose time resolution for data:",
             options=list(resolution_display_options.keys()),
-            index=0, # Default to "Hourly"
+            index=1, # Default to "Hourly"
             key="resolution_selector"
         )
         selected_resolution_entsoe_code = resolution_display_options[selected_resolution_display_name]
